@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xin Chào - Giao diện iPad</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            height: 100vh;
+            background: linear-gradient(135deg, #1a0033, #003082b3, #8a2be2, #00ffbf66);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        body::before {
+            content: "";
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 0, 255, 0.2), rgba(0, 0, 0, 0));
+            animation: movingLights 6s linear infinite;
+        }
+        @keyframes movingLights {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 700px;
+            height: 500px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow-y: auto;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+        .header {
+            font-family: 'Dancing Script', cursive;
+            font-size: 6em;
+            font-weight: 600;
+            color: #ff6b6b;
+            letter-spacing: 7px;
+            margin-bottom: 10px;
+        }
+        .animation-section {
+            display: flex;
+            gap: 130px;
+        }
+        .it-animation {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+            position: relative;
+            animation: flicker 1.5s infinite alternate, glitch1 0.8s infinite linear alternate;
+        }
+        @keyframes flicker {
+            0% { text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc, 0 0 40px #00ffcc; }
+            50% { text-shadow: 0 0 15px #ff00ff, 0 0 30px #ff00ff, 0 0 50px #ff00ff; }
+            100% { text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc, 0 0 40px #00ffcc; }
+        }
+        @keyframes glitch1 {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-2px, 2px); }
+            50% { transform: translate(2px, -2px); }
+            75% { transform: translate(-2px, -2px); }
+            100% { transform: translate(0, 0); }
+        }
+        .it-animation::after {
+            content: "IT...";
+            position: absolute;
+            animation: dots 1.5s infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: "IT"; }
+            40% { content: "IT."; }
+            50% { content: "IT.."; }
+            60% { content: "IT..."; }
+            70% { content: "IT...."; }
+            80%, 100% { content: "IT....."; }
+        }
+        .input-section {
+            margin: 15px 0;
+            width: 100%;
+        }
+        .input-section label {
+            display: block;
+            color: #fff;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .input-section input {
+            padding: 12px;
+            width: 90%;
+            max-width: 300px;
+            font-size: 1em;
+            border: none;
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .input-section input:focus {
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+        }
+        .start-btn {
+            padding: 7px 132px;
+            font-size: 1.7em;
+            background: linear-gradient(135deg, #ff6b6b, #ff4040);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            margin-top: 15px;
+            box-shadow: 0 5px 10px rgba(255, 64, 64, 0.3);
+        }
+        .start-btn:hover {
+            background: linear-gradient(135deg, #ff4040, #ff2020);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(255, 64, 64, 0.5);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">Welcome To This Website !!</div>
+        <div class="animation-section">
+            <div class="it-animation">IT</div>
+            <div class="it-animation">IT</div>
+            <div class="it-animation">IT</div>
+        </div>
+        <div class="input-section">
+            <label for="fullName">Họ và tên người dùng:</label>
+            <input type="text" id="fullName" placeholder="Nhập họ và tên..." required>
+        </div>
+        <button class="start-btn" onclick="handleStart()">Start</button>
+    </div>
+
+    <script>
+        function handleStart() {
+            const fullName = document.getElementById('fullName').value;
+            if (fullName.trim() === '') {
+                alert('Vui lòng nhập họ và tên trước khi bắt đầu!');
+            } else {
+                window.location.href = `/detection?name=${encodeURIComponent(fullName)}`;
+            }
+        }
+    </script>
+</body>
+</html>

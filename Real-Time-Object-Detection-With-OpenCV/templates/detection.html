@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhận diện vật thể - YOLOv8</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            height: 100vh;
+            background: linear-gradient(135deg, #1a0033, #003082b3, #8a2be2, #00ffbf66);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+    
+        /* Hiệu ứng ánh sáng di chuyển */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 0, 255, 0.3), rgba(0, 0, 0, 0));
+            animation: movingLights 6s linear infinite;
+        }
+    
+        /* Hiệu ứng ánh sáng lung linh */
+        @keyframes movingLights {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+    
+        .container {
+            width: 1200px;
+            height: 700px;
+            display: flex;
+            background: linear-gradient(45deg, #1E1E3F, #6B48FF, #FF00FF, #00FFFF);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 3px solid #FF00FF;
+            box-shadow: 0 0 30px #FF00FF, 0 0 60px #00FFFF, 0 0 100px #6B48FF;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            animation: containerGlow 2s infinite alternate;
+        }
+
+        @keyframes containerGlow {
+            0% { box-shadow: 0 0 30px #784478, 0 0 60px #639a9a, 0 0 100px #685e95; }
+            100% { box-shadow: 0 0 50px #784478, 0 0 80px #639a9a, 0 0 120px #685e95; }
+            
+        }
+
+        .container::before {
+            content: "";
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(45deg, #FF00FF, #00FFFF, #6B48FF, #FF00FF);
+            z-index: -1;
+            filter: blur(15px);
+            animation: borderFlow 4s linear infinite;
+        }
+
+        @keyframes borderFlow {
+            0% { background-position: 0 0; }
+            100% { background-position: 200% 200%; }
+        }
+    
+        .left {
+            flex: 4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-right: 2px solid black;
+            padding: 20px;
+        }
+    
+        .left h2 {
+            font-size: 2.5em;
+            text-align: center;
+            text-transform: uppercase;
+            color: #FF00FF;
+            text-shadow: 0 0 15px #FF00FF, 0 0 30px #00FFFF, 0 0 50px #6B48FF;
+            letter-spacing: 5px;
+            animation: titleGlow 2s infinite alternate;
+            width: 100%;
+            padding: 10px 0;
+            margin-bottom: 10px;
+        }
+
+        @keyframes titleGlow {
+            0% { text-shadow: 0 0 15px #FF00FF, 0 0 30px #00FFFF, 0 0 50px #6B48FF; }
+            100% { text-shadow: 0 0 25px #FF00FF, 0 0 40px #00FFFF, 0 0 70px #6B48FF; }
+        }
+    
+        .video-box {
+            width: 80%;
+            height: 450px;
+            border: 3px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: black;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+    
+        .video-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    
+        .right {
+            flex: 1.5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+    
+        .right p {
+            color: #fff;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            width: 150px;
+            margin: 10px;
+            padding: 15px 30px;
+            border: 2px solid black;
+            background-color: white;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            text-transform: uppercase;
+            transition: 0.3s, transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            color: black;
+        }
+    
+        .button::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .button:hover {
+            background-color: black;
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(255, 0, 255, 0.8);
+        }
+
+        .button:active {
+            transform: scale(0.95);
+        }
+
+        .button-start {
+            animation: neon-start 1.5s infinite alternate;
+        }
+
+        .button-stop {
+            animation: neon-stop 1.5s infinite alternate;
+        }
+
+        .button-logout {
+            animation: neon-logout 1.5s infinite alternate;
+        }
+
+        @keyframes neon-start {
+            0% { box-shadow: 0 0 5px #ff6b6b, 0 0 10px #ff6b6b, 0 0 20px #ff00ff; }
+            100% { box-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc, 0 0 30px #00ffcc; }
+        }
+
+        @keyframes neon-stop {
+            0% { box-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc, 0 0 20px #ff00ff; }
+            100% { box-shadow: 0 0 10px #ff6b6b, 0 0 20px #ff6b6b, 0 0 30px #ff00ff; }
+        }
+
+        @keyframes neon-logout {
+            0% { box-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 20px #00ffcc; }
+            100% { box-shadow: 0 0 10px #6b48ff, 0 0 20px #6b48ff, 0 0 30px #ff6b6b; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left">
+            <h2>Nhận diện vật thể - YOLOv8</h2>
+            <div class="video-box">
+                <img id="videoStream" src="" alt="Video Stream">
+            </div>
+        </div>
+        <div class="right">
+            <p id="greeting">Xin chào</p>
+            <button class="button button-start" onclick="startCamera()">Mở</button>
+            <button class="button button-stop" onclick="stopCamera()">Dừng</button>
+            <button class="button button-logout" onclick="logout()">Đăng xuất</button>
+        </div>
+    </div>
+
+    <script>
+        // Lấy tên người dùng từ URL và hiển thị
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const fullName = urlParams.get('name');
+            if (fullName) {
+                document.getElementById('greeting').textContent = `Xin chào ${decodeURIComponent(fullName)}`;
+            }
+        };
+
+        function startCamera() {
+            document.getElementById("videoStream").src = "/video_feed";
+        }
+
+        function stopCamera() {
+            fetch('/stop', { method: 'POST' }).then(() => {
+                document.getElementById("videoStream").src = "";
+            });
+        }
+
+        function logout() {
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>
