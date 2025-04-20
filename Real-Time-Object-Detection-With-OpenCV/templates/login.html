@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập - Giao diện iPad</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            height: 100vh;
+            background: linear-gradient(135deg, #1a0033, #003082b3, #8a2be2, #00ffbf66);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        body::before {
+            content: "";
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 0, 255, 0.2), rgba(0, 0, 0, 0));
+            animation: movingLights 6s linear infinite;
+        }
+        @keyframes movingLights {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 700px;
+            height: 500px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow-y: auto;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+        .header {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4em;
+            font-weight: 600;
+            color: #ff6b6b;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+        }
+        .input-section {
+            margin: 15px 0;
+            width: 100%;
+        }
+        .input-section label {
+            display: block;
+            color: #fff;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .input-section input {
+            padding: 12px;
+            width: 90%;
+            max-width: 300px;
+            font-size: 1em;
+            border: none;
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .input-section input:focus {
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+        }
+        .submit-btn {
+            padding: 7px 132px;
+            font-size: 1.7em;
+            background: linear-gradient(135deg, #ff6b6b, #ff4040);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            margin-top: 15px;
+            box-shadow: 0 5px 10px rgba(255, 64, 64, 0.3);
+        }
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #ff4040, #ff2020);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(255, 64, 64, 0.5);
+        }
+        .link {
+            margin-top: 15px;
+            color: #00ffcc;
+            font-size: 1em;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .link:hover {
+            color: #ff00ff;
+            text-decoration: underline;
+        }
+        .flash-message {
+            color: #ff4040;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+        .flash-message.success {
+            color: #00ffcc;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">Đăng Nhập</div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form method="POST" action="/login">
+            <div class="input-section">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Nhập email..." required>
+            </div>
+            <div class="input-section">
+                <label for="password">Mật khẩu:</label>
+                <input type="password" id="password" name="password" placeholder="Nhập mật khẩu..." required>
+            </div>
+            <button type="submit" class="submit-btn">Đăng Nhập</button>
+        </form>
+        <a href="/register" class="link">Chưa có tài khoản? Đăng ký ngay!</a>
+    </div>
+</body>
+</html>

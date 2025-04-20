@@ -52,11 +52,12 @@
             font-weight: 600;
             color: #ff6b6b;
             letter-spacing: 7px;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
         .animation-section {
             display: flex;
             gap: 130px;
+            margin-bottom: 30px;
         }
         .it-animation {
             font-size: 2.5em;
@@ -91,36 +92,13 @@
             70% { content: "IT...."; }
             80%, 100% { content: "IT....."; }
         }
-        .input-section {
-            margin: 15px 0;
-            width: 100%;
+        .button-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
-        .input-section label {
-            display: block;
-            color: #fff;
-            font-size: 1.1em;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-        .input-section input {
-            padding: 12px;
-            width: 90%;
-            max-width: 300px;
-            font-size: 1em;
-            border: none;
-            border-radius: 10px;
-            outline: none;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.8);
-            color: #333;
-            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .input-section input:focus {
-            background: rgba(255, 255, 255, 1);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
-        }
-        .start-btn {
-            padding: 7px 132px;
+        .auth-btn {
+            padding: 12px 150px;
             font-size: 1.7em;
             background: linear-gradient(135deg, #ff6b6b, #ff4040);
             color: white;
@@ -129,10 +107,9 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: bold;
-            margin-top: 15px;
             box-shadow: 0 5px 10px rgba(255, 64, 64, 0.3);
         }
-        .start-btn:hover {
+        .auth-btn:hover {
             background: linear-gradient(135deg, #ff4040, #ff2020);
             transform: translateY(-3px);
             box-shadow: 0 8px 15px rgba(255, 64, 64, 0.5);
@@ -148,22 +125,10 @@
             <div class="it-animation">IT</div>
             <div class="it-animation">IT</div>
         </div>
-        <div class="input-section">
-            <label for="fullName">Họ và tên người dùng:</label>
-            <input type="text" id="fullName" placeholder="Nhập họ và tên..." required>
+        <div class="button-section">
+            <button class="auth-btn" onclick="window.location.href='/login'">Đăng Nhập</button>
+            <button class="auth-btn" onclick="window.location.href='/register'">Đăng Ký</button>
         </div>
-        <button class="start-btn" onclick="handleStart()">Start</button>
     </div>
-
-    <script>
-        function handleStart() {
-            const fullName = document.getElementById('fullName').value;
-            if (fullName.trim() === '') {
-                alert('Vui lòng nhập họ và tên trước khi bắt đầu!');
-            } else {
-                window.location.href = `/detection?name=${encodeURIComponent(fullName)}`;
-            }
-        }
-    </script>
 </body>
 </html>
