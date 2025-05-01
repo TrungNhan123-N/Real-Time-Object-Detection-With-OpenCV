@@ -276,7 +276,7 @@
 <body>
     <div class="container">
         <div class="left">
-            <h2 id="mode-title">Cỗ máy chơi game YOLOv8</h2>
+            <h2 id="mode-title">OBJECT RECOGNITION YOLOv8</h2>
             <div class="video-box">
                 <img id="videoStream" src="" alt="Video Stream">
             </div>
@@ -284,16 +284,16 @@
         <div class="right">
             <p>Xin chào {{ name }}</p>
             <div style="display: flex; flex-wrap: wrap; justify-content: center;">
-                <div class="arcade-button" onclick="togglePanel('settings')">Cài đặt</div>
-                <div class="arcade-button" onclick="togglePanel('stats')">Thống kê</div>
-                <div class="arcade-button" onclick="togglePanel('files')">File</div>
-                <div class="arcade-button" onclick="togglePanel('capture')">Chụp ảnh</div>
+                <div class="arcade-button" onclick="togglePanel('settings')">SETTING</div>
+                <div class="arcade-button" onclick="togglePanel('stats')">CLEARLY</div>
+                <div class="arcade-button" onclick="togglePanel('files')">FILE</div>
+                <div class="arcade-button" onclick="togglePanel('capture')">PHOTO</div>
             </div>
-            <button class="control-button" onclick="startCamera()">Mở</button>
-            <button class="control-button" onclick="stopCamera()">Dừng</button>
-            <button class="control-button" onclick="setMode('detection')">Phát hiện</button>
-            <button class="control-button" onclick="setMode('tracking')">Theo dõi</button>
-            <button class="control-button" onclick="logout()">Đăng xuất</button>
+            <button class="control-button" onclick="startCamera()">MỞ</button>
+            <button class="control-button" onclick="stopCamera()">DỪNG</button>
+            <button class="control-button" onclick="setMode('detection')">PHÁT HIỆN</button>
+            <button class="control-button" onclick="setMode('tracking')">THEO DÕI</button>
+            <button class="control-button" onclick="logout()">ĐĂNG XUẤT</button>
         </div>
     </div>
 
@@ -305,7 +305,7 @@
         <input type="color" id="boxColor" value="#00FF00">
         <label>Màu nhãn:</label>
         <input type="color" id="labelColor" value="#00FF00">
-        <button class="panel-button" onclick="updateSettings()">CẬP NHẬT</button>
+        <button class="panel-button" onclick="updateSettings()">UPDATE</button>
     </div>
 
     <!-- Panel Thống kê -->
@@ -326,7 +326,7 @@
     <div id="capture-panel" class="panel">
         <button class="close-button" id="close-capture">X</button>
         <h3>CHỤP ẢNH</h3>
-        <button class="panel-button" onclick="captureImage()">CHỤP</button>
+        <button class="panel-button" onclick="captureImage()">CAPTURE</button>
     </div>
 
     <script>

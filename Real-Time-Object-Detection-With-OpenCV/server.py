@@ -5,7 +5,7 @@ from ultralytics import YOLO
 from imutils.video import VideoStream
 import time
 import numpy as np
-from sort import Sort
+from deep_sort_realtime.deepsort_tracker import DeepSort
 import io
 from datetime import datetime
 
@@ -14,7 +14,7 @@ app = Flask(__name__)
 # Cấu hình MySQL
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'nhan123'
-app.config['MYSQL_PASSWORD'] = 'nhan123@'
+app.config['MYSQL_PASSWORD'] = 'new_password'
 app.config['MYSQL_DB'] = 'yolo_v8'
 app.secret_key = 'your_secret_key'
 
@@ -22,7 +22,8 @@ mysql = MySQL(app)
 
 # Load model YOLOv8
 model = YOLO("yolov8s.pt")
-tracker = Sort()
+# Khởi tạo DeepSORT
+deepsort = DeepSort(max_age=30, n_init=3, nn_budget=100)
 
 # Kiểm tra model.names và lấy danh sách tên lớp
 if isinstance(model.names, dict):
@@ -95,21 +96,28 @@ def detect_objects():
                 conf = box.conf[0].item()
                 cls = int(box.cls[0].item())
                 x1, y1, x2, y2 = map(int, box.xyxy[0])
-                detections.append([x1, y1, x2, y2, conf, cls])
+                # DeepSORT yêu cầu định dạng [x, y, w, h, conf]
+                detections.append(([x1, y1, x2 - x1, y2 - y1], conf, cls))
 
                 label = model.names[cls]
                 stats['detections'][label] = stats['detections'].get(label, 0) + 1
 
         if settings['mode'] == 'tracking' and detections:
-            tracked_objects = tracker.update(np.array([[x1, y1, x2, y2, conf] for x1, y1, x2, y2, conf, cls in detections]))
-            for track in tracked_objects:
-                x1, y1, x2, y2, track_id = map(int, track)
+            # Cập nhật DeepSORT
+            tracks = deepsort.update_tracks(detections, frame=frame)
+            for track in tracks:
+                if not track.is_confirmed():
+                    continue
+                track_id = track.track_id
+                ltrb = track.to_ltrb()  # [left, top, right, bottom]
+                x1, y1, x2, y2 = map(int, ltrb)
                 label = f"ID {track_id}"
                 print(f"Drawing tracking box: {x1}, {y1}, {x2}, {y2} with color {settings['box_color']}")
                 cv2.rectangle(frame, (x1, y1), (x2, y2), settings['box_color'], 2)
                 cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, settings['label_color'], 2)
         else:
-            for x1, y1, x2, y2, conf, cls in detections:
+            for (x, y, w, h), conf, cls in detections:
+                x1, y1, x2, y2 = int(x), int(y), int(x + w), int(y + h)
                 label = f"{model.names[cls]}: {conf:.2f}"
                 print(f"Drawing detection box: {x1}, {y1}, {x2}, {y2} with color {settings['box_color']}")
                 cv2.rectangle(frame, (x1, y1), (x2, y2), settings['box_color'], 2)
@@ -148,10 +156,10 @@ def register():
             cur.execute('INSERT INTO users (username, email, password) VALUES (%s, %s, %s)', 
                         (username, email, password))
             mysql.connection.commit()
-            flash('Đăng ký thành công! Vui lòng đăng nhập.', 'success')
+            flash('Successful registration! Please login.', 'success')
             return redirect(url_for('login'))
         except Exception as e:
-            flash('Tên người dùng hoặc email đã tồn tại!', 'error')
+            flash('Username or email has existed!', 'error')
             return render_template('register.html')
         finally:
             cur.close()
@@ -171,17 +179,17 @@ def login():
         if user:
             session['user_id'] = user[0]
             session['username'] = user[1]
-            flash('Đăng nhập thành công!', 'success')
+            flash('Sign in successfully!', 'success')
             return redirect(url_for('detection'))
         else:
-            flash('Sai email hoặc mật khẩu!', 'error')
+            flash('Wrong email or password!', 'error')
             return render_template('login.html')
     return render_template('login.html')
 
 @app.route('/detection')
 def detection():
     if 'user_id' not in session:
-        flash('Vui lòng đăng nhập trước!', 'error')
+        flash('Please login first!', 'error')
         return redirect(url_for('login'))
     username = session.get('username', 'Người dùng')
     return render_template('detection.html', name=username)
@@ -226,19 +234,19 @@ def update_settings():
 @app.route('/capture_image', methods=['POST'])
 def capture_image():
     if 'user_id' not in session:
-        return "Vui lòng đăng nhập trước.", 401
+        return "Please login first.", 401
     if not is_running or vs is None:
-        return "Camera chưa được mở. Vui lòng nhấn nút 'Mở' trước khi chụp ảnh.", 400
+        return "The camera has not been opened. Please click the 'Open' button before taking photos.", 400
 
     frame = vs.read()
     if frame is None:
-        return "Không thể chụp ảnh. Vui lòng thử lại.", 400
+        return "Can't take photos. Please try again.", 400
 
     frame = cv2.resize(frame, (640, 480))
     _, buffer = cv2.imencode('.jpg', frame)
     img_data = buffer.tobytes()
     save_file_to_db(None, img_data, 'image')
-    return "Ảnh đã được chụp và lưu thành công.", 200
+    return "The photo has been taken and saved successfully.", 200
 
 @app.route('/download_file/<int:file_id>', methods=['GET'])
 def download_file(file_id):
@@ -310,7 +318,7 @@ def logout():
             vs = None
     session.pop('user_id', None)
     session.pop('username', None)
-    flash('Đăng xuất thành công!', 'success')
+    flash('Successfully logged!', 'success')
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
